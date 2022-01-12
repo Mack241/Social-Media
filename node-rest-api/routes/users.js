@@ -46,9 +46,15 @@ router.delete("/:id", async (req, res) => {
 })
 
 //get a user
-router.get("/:id", async (req, res) => {
+router.get("/", async (req, res) => {
+    const userId = req.query.userId
+    const username = req.query.username
+
     try{
-        const user = await User.findById(req.params.id)
+        const user = userId 
+        ? await User.findById(userId)
+        : await User.findOne({ username })
+
         const { password, updatedAt, ...other } = user._doc
 
         if(user === null){
@@ -58,6 +64,26 @@ router.get("/:id", async (req, res) => {
         }
     }catch(error){
         res.status(500).json(error)
+    }
+})
+
+//get friends
+router.get("/friends/:id", async(req, res) => {
+    try{
+        const user = await User.findById(req.params.id)
+        const friends = await Promise.all(
+            user.following.map(friendId => {
+                return User.findById(friendId)
+            })
+        )
+        let friendList = []
+        friends.map(friend => {
+            const {_id, username, profilePicture} = friend
+            friendList.push({ _id, username, profilePicture })
+        })
+        res.status(200).json(friendList)
+    }catch(err){
+        res.status(500).json(err)
     }
 })
 

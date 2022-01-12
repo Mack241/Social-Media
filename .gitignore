@@ -1,2 +1,5 @@
 /node-rest-api/node_modules
+/node-rest-api/.env
+
 /react-social/node_modules
+/react-social/.env

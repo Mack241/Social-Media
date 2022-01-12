@@ -1,8 +1,9 @@
 import express from 'express';
-import mongoose from 'mongoose'
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import multer from 'multer';
+import path from 'path';
 
 import userRoute from './routes/users.js'
 import authRoute from './routes/auth.js'
@@ -13,12 +14,34 @@ dotenv.config()
 
 connectDB()
 
-const app = express()
 
+const app = express()
+const __dirname = path.resolve()
+
+app.use("/images", express.static(path.join(__dirname, "public/images")))
 //middleware
 app.use(express.json())
 app.use(helmet())
 app.use(morgan("dev"))
+
+const storage = multer.diskStorage({
+    destination:(req, file, cb) => {
+        cb(null, "public/images")
+    },
+    filename: (req, file, cb) => {
+        // console.log(req)
+        cb(null, req.body.name)
+    },
+})
+
+const upload = multer({ storage: storage })
+app.post('/api/upload', upload.single('file'),  (req, res) => {
+    try{    
+        return res.status(200).json("File uploaded successfully!")
+    }catch(err){
+        console.error(err)
+    }
+})
 
 app.use('/api/users', userRoute)
 app.use('/api/auth', authRoute)
