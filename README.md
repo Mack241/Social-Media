@@ -18,6 +18,8 @@ This is a social media application created using React (v 17.0.2) and NodeJS
 6.Multer
 7.Morgan
 
+**Note -** Chat functionality upcoming.
+
 **Screens:**
 
 **1.Home Screen**
