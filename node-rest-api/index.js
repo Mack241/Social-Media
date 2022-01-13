@@ -34,6 +34,10 @@ const storage = multer.diskStorage({
     },
 })
 
+app.get('/', (req, res) => {
+    res.send("Hello World")
+})
+
 const upload = multer({ storage: storage })
 app.post('/api/upload', upload.single('file'),  (req, res) => {
     try{    
@@ -47,6 +51,8 @@ app.use('/api/users', userRoute)
 app.use('/api/auth', authRoute)
 app.use('/api/posts', postRoute)
 
-app.listen(8080, () => {
-    console.log('Server is running...')
+const port = process.env.PORT || 8080
+
+app.listen(port, () => {
+    console.log(`Server is running...${port}`)
 })
